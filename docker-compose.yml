@@ -1,7 +1,7 @@
 # locals hosting for postgres
 services:
   postgres:
-    image: postgres:latest
+    image: postgis/postgis:latest
     container_name: windydb
     restart: always
     ports:
