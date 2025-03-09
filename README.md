@@ -1,1 +1,1 @@
-Playground for weather, GIS, and Django apps. 
+Playground for weather data, GIS stuff, and (Geo)Django apps. 
