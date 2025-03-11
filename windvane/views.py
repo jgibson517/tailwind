@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import Http404
 
-from .strava import get_access_token
+from .strava import get_access_token, CLIENT_ID
 from .models import User
 from requests import HTTPError
 
@@ -15,15 +15,20 @@ from requests import HTTPError
 # weather analysis is conducted on these routes
 
 
-def authorize_user(request):
-    ### redirect logic goes here
-    ## need landing page if users don't authorize
-    auth_token = ""
+def connect_strava(request):
+    domain = request.get_host()
 
+    context = {"client_id": CLIENT_ID, "tailwind_domain": domain}
+    return render(request, "windvane/authorize.html", context)
+
+
+def authorize_user(request):
+    auth_token = request.GET.get("code")
+    
     try:
         auth_resp = get_access_token(auth_token)
     except HTTPError:
-        raise Http404
+        raise Http404()
 
     athlete = auth_resp["athlete"]
 
@@ -39,6 +44,7 @@ def authorize_user(request):
     )
 
     # add to db
+    # todo: check if user exists in the database before saving
     new_user.save()
 
     context = {"user_name": f"{new_user.first_name} {new_user.last_name}"}
